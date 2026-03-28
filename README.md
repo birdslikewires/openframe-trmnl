@@ -26,8 +26,8 @@ sudo bash install.sh
 
 The installer will:
 - Prompt for your TRMNL API key and write it to `/etc/trmnl.conf`
-- Install dependencies (`fbida`, `curl`, `jq`) if not already present
-- Install the polling script to `/opt/trmnl/trmnl.sh`
+- Install dependencies (`python3-pil`, `curl`, `jq`) if not already present
+- Install the polling script and framebuffer writer to `/opt/trmnl/`
 - Install and enable a systemd service that starts on boot
 
 ## Configuration
@@ -56,7 +56,7 @@ systemctl stop trmnl        # stop the client
 
 ## How it works
 
-The client polls `https://usetrmnl.com/api/display` with your API key, receives a PNG image URL and a refresh interval, downloads the image, and displays it on `/dev/fb0` using `fbi`. It then sleeps for the instructed interval before polling again.
+The client polls `https://usetrmnl.com/api/display` with your API key, receives a PNG image URL and a refresh interval, downloads the image, and writes it directly to `/dev/fb0` using a small Python script (`display.py`). It then sleeps for the instructed interval before polling again.
 
 ## Acknowledgements
 

@@ -5,8 +5,8 @@
 set -euo pipefail
 
 CONFIG_FILE="/etc/trmnl.conf"
-IMAGE_FILE="/tmp/trmnl.png"
-IMAGE_TMP="/tmp/trmnl.png.tmp"
+IMAGE_FILE="/tmp/trmnl.img"
+IMAGE_TMP="/tmp/trmnl.img.tmp"
 FRAMEBUFFER="/dev/fb0"
 API_ENDPOINT="https://usetrmnl.com/api/display"
 DEFAULT_REFRESH=900  # fallback if API doesn't return a refresh rate
@@ -62,17 +62,9 @@ while true; do
 		continue
 	fi
 
-	# Kill any lingering fbi process before writing a new frame
-	pkill -x fbi 2>/dev/null || true
-
 	# Write to framebuffer
-	# -d: framebuffer device
-	# -T 1: use virtual console 1
-	# -noverbose: suppress output
-	# -a: autozoom to fit screen
-	# -1: exit after displaying (don't wait for keypress)
-	fbi -d "$FRAMEBUFFER" -T 1 -noverbose -a -1 "$IMAGE_FILE" 2>/dev/null || {
-		log "Warning: fbi failed to display image" >&2
+	python3 /opt/trmnl/display.py "$IMAGE_FILE" "$FRAMEBUFFER" || {
+		log "Warning: display.py failed to write to framebuffer" >&2
 	}
 
 	log "Display updated; next refresh in ${REFRESH}s"

@@ -13,6 +13,7 @@ CONFIG_FILE="/etc/trmnl.conf"
 SERVICE_FILE="/etc/systemd/system/trmnl.service"
 SCRIPT_URL="https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main/trmnl.sh"
 SERVICE_URL="https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main/trmnl.service"
+DISPLAY_URL="https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main/display.py"
 
 # --- Colour output helpers ---
 red()   { echo -e "\033[0;31m$*\033[0m"; }
@@ -62,7 +63,7 @@ fi
 bold "Checking dependencies..."
 
 MISSING_PKGS=()
-for pkg in fbida curl jq; do
+for pkg in python3-pil curl jq; do
 	if ! dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "install ok installed"; then
 		MISSING_PKGS+=("$pkg")
 	fi
@@ -93,7 +94,14 @@ else
 fi
 
 chmod +x "$INSTALL_DIR/trmnl.sh"
-green "Client script installed to $INSTALL_DIR/trmnl.sh"
+
+if [[ -f "$SCRIPT_DIR/display.py" ]]; then
+	cp "$SCRIPT_DIR/display.py" "$INSTALL_DIR/display.py"
+else
+	curl -sS "$DISPLAY_URL" -o "$INSTALL_DIR/display.py"
+fi
+
+green "Client scripts installed to $INSTALL_DIR/"
 
 # --- Install systemd unit ---
 bold "Installing systemd service..."
