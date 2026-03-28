@@ -13,13 +13,13 @@ Polls the [TRMNL](https://usetrmnl.com) cloud API and writes the dashboard image
 ## Installation
 
 ```bash
-curl -sS https://raw.githubusercontent.com/YOUR_USERNAME/openframe-trmnl/main/install.sh | sudo bash
+curl -sS https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main/install.sh | sudo bash
 ```
 
 Or clone the repo and run locally:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/openframe-trmnl.git
+git clone https://github.com/birdslikewires/openframe-trmnl.git
 cd openframe-trmnl
 sudo bash install.sh
 ```

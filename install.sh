@@ -11,8 +11,8 @@ set -euo pipefail
 INSTALL_DIR="/opt/trmnl"
 CONFIG_FILE="/etc/trmnl.conf"
 SERVICE_FILE="/etc/systemd/system/trmnl.service"
-SCRIPT_URL="https://raw.githubusercontent.com/YOUR_USERNAME/openframe-trmnl/main/trmnl.sh"
-SERVICE_URL="https://raw.githubusercontent.com/YOUR_USERNAME/openframe-trmnl/main/trmnl.service"
+SCRIPT_URL="https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main/trmnl.sh"
+SERVICE_URL="https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main/trmnl.service"
 
 # --- Colour output helpers ---
 red()   { echo -e "\033[0;31m$*\033[0m"; }
