@@ -41,7 +41,7 @@ else
 	echo "You'll need your TRMNL BYOD API key."
 	echo "Find it at: https://usetrmnl.com -> top-right menu -> device settings"
 	echo ""
-	read -rp "Enter your TRMNL API key: " API_KEY
+	read -rp "Enter your TRMNL API key: " API_KEY < /dev/tty
 
 	if [[ -z "$API_KEY" ]]; then
 		red "Error: API key cannot be empty."
