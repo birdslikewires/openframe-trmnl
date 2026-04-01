@@ -4,16 +4,19 @@
 # Designed for the OpenFrame / O2 Joggler but should work on any
 # Debian-based system with a framebuffer at /dev/fb0.
 #
-# Usage: sudo bash install.sh
+# Usage:
+#   git clone https://github.com/birdslikewires/openframe-trmnl /opt/trmnl
+#   sudo bash /opt/trmnl/install.sh
+#
+# To update:
+#   git -C /opt/trmnl pull && sudo systemctl restart trmnl
 
 set -euo pipefail
 
 INSTALL_DIR="/opt/trmnl"
 CONFIG_FILE="/etc/trmnl.conf"
 SERVICE_FILE="/etc/systemd/system/trmnl.service"
-SCRIPT_URL="https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main/trmnl.sh"
-SERVICE_URL="https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main/trmnl.service"
-DISPLAY_URL="https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main/display.py"
+REPO_URL="https://github.com/birdslikewires/openframe-trmnl"
 
 # --- Colour output helpers ---
 red()   { echo -e "\033[0;31m$*\033[0m"; }
@@ -78,39 +81,26 @@ else
 	green "All dependencies already present."
 fi
 
-# --- Install script ---
-bold "Installing TRMNL client..."
+# --- Clone or verify repo ---
+bold "Setting up TRMNL client..."
 
-mkdir -p "$INSTALL_DIR"
-
-# If running from a local clone, copy the files directly.
-# Otherwise, download them from GitHub.
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
-
-if [[ -f "$SCRIPT_DIR/trmnl.sh" ]]; then
-	cp "$SCRIPT_DIR/trmnl.sh" "$INSTALL_DIR/trmnl.sh"
+if [[ -d "$INSTALL_DIR/.git" ]]; then
+	green "Repo already present at $INSTALL_DIR"
+elif [[ -f "$INSTALL_DIR/trmnl.sh" ]]; then
+	red "Error: $INSTALL_DIR exists but is not a git repo. Remove it and re-run."
+	exit 1
 else
-	curl -sS "$SCRIPT_URL" -o "$INSTALL_DIR/trmnl.sh"
+	bold "Cloning repo to $INSTALL_DIR..."
+	git clone "$REPO_URL" "$INSTALL_DIR"
 fi
 
 chmod +x "$INSTALL_DIR/trmnl.sh"
-
-if [[ -f "$SCRIPT_DIR/display.py" ]]; then
-	cp "$SCRIPT_DIR/display.py" "$INSTALL_DIR/display.py"
-else
-	curl -sS "$DISPLAY_URL" -o "$INSTALL_DIR/display.py"
-fi
-
-green "Client scripts installed to $INSTALL_DIR/"
+green "Client ready at $INSTALL_DIR/"
 
 # --- Install systemd unit ---
 bold "Installing systemd service..."
 
-if [[ -f "$SCRIPT_DIR/trmnl.service" ]]; then
-	cp "$SCRIPT_DIR/trmnl.service" "$SERVICE_FILE"
-else
-	curl -sS "$SERVICE_URL" -o "$SERVICE_FILE"
-fi
+cp "$INSTALL_DIR/trmnl.service" "$SERVICE_FILE"
 
 systemctl daemon-reload
 systemctl enable trmnl.service

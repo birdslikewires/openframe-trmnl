@@ -13,22 +13,20 @@ Polls the [TRMNL](https://usetrmnl.com) cloud API and writes the dashboard image
 ## Installation
 
 ```bash
-curl -sS https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main/install.sh | sudo bash
-```
-
-Or clone the repo and run locally:
-
-```bash
-git clone https://github.com/birdslikewires/openframe-trmnl.git
-cd openframe-trmnl
-sudo bash install.sh
+git clone https://github.com/birdslikewires/openframe-trmnl /opt/trmnl
+sudo bash /opt/trmnl/install.sh
 ```
 
 The installer will:
 - Prompt for your TRMNL API key and write it to `/etc/trmnl.conf`
 - Install dependencies (`python3-pil`, `curl`, `jq`) if not already present
-- Install the polling script and framebuffer writer to `/opt/trmnl/`
 - Install and enable a systemd service that starts on boot
+
+## Updating
+
+```bash
+git -C /opt/trmnl pull && sudo systemctl restart trmnl
+```
 
 ## Configuration
 
