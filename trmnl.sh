@@ -28,6 +28,9 @@ if [[ -z "${TRMNL_API_KEY:-}" ]]; then
 	exit 1
 fi
 
+# --- Hide console cursor and disable screen blanking ---
+printf '\033[?25l\033[9;0]' > /dev/tty1 2>/dev/null || true
+
 # --- Main loop ---
 while true; do
 	# Fetch display metadata from TRMNL API

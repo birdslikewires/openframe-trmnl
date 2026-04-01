@@ -85,7 +85,7 @@ mkdir -p "$INSTALL_DIR"
 
 # If running from a local clone, copy the files directly.
 # Otherwise, download them from GitHub.
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 
 if [[ -f "$SCRIPT_DIR/trmnl.sh" ]]; then
 	cp "$SCRIPT_DIR/trmnl.sh" "$INSTALL_DIR/trmnl.sh"
