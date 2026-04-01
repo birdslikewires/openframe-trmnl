@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# TRMNL display client for OpenFrame / O2 Joggler
-# Polls the TRMNL cloud API and writes the response image to the framebuffer.
+
+## TRMNL display client for OpenFrame
+##  Polls the TRMNL cloud API and writes the response image to the framebuffer.
 
 set -euo pipefail
 
@@ -70,6 +71,7 @@ while true; do
 		log "Warning: display.py failed to write to framebuffer" >&2
 	}
 
-	log "Display updated; next refresh in ${REFRESH}s"
+	NEXT_REFRESH=$(date -d "+${REFRESH} seconds" '+%Y-%m-%d %H:%M:%S' 2>/dev/null)
+	log "Display updated; next refresh in ${REFRESH}s (at ${NEXT_REFRESH})"
 	sleep "$REFRESH"
 done
