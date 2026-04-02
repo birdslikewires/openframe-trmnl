@@ -44,11 +44,19 @@ while true; do
 	}
 
 	IMAGE_URL=$(echo "$RESPONSE" | jq -r '.image_url // empty')
-	REFRESH=$(echo "$RESPONSE"  | jq -r '.refresh_rate // empty')
+	FILENAME=$(echo "$RESPONSE"  | jq -r '.filename // empty')
+	REFRESH=$(echo "$RESPONSE"   | jq -r '.refresh_rate // empty')
 
 	# Fall back to default refresh rate if API didn't return one; enforce minimum
 	REFRESH=${REFRESH:-$DEFAULT_REFRESH}
 	(( REFRESH < MIN_REFRESH )) && REFRESH=$MIN_REFRESH
+
+	if [[ "$FILENAME" == "sleep" ]]; then
+		log "Sleep requested; turning off display and waiting ${REFRESH}s"
+		of-backlight 0 || log "Warning: openframe command failed" >&2
+		sleep "$REFRESH"
+		continue
+	fi
 
 	if [[ -z "$IMAGE_URL" ]]; then
 		log "Warning: no image_url in API response, retrying in ${REFRESH}s" >&2
