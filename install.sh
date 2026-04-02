@@ -1,22 +1,21 @@
 #!/usr/bin/env bash
-# TRMNL OpenFrame bootstrap installer
+# TRMNL OpenFrame installer / updater
 # Sets up the TRMNL display client on a Debian Trixie based system.
 # Designed for the OpenFrame / O2 Joggler but should work on any
 # Debian-based system with a framebuffer at /dev/fb0.
 #
-# Usage:
-#   git clone https://github.com/birdslikewires/openframe-trmnl /opt/trmnl
-#   sudo bash /opt/trmnl/install.sh
+# First install:
+#   curl -sS https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main/install.sh | sudo bash
 #
 # To update:
-#   git -C /opt/trmnl pull && sudo systemctl restart trmnl
+#   sudo bash /opt/trmnl/install.sh
 
 set -euo pipefail
 
 INSTALL_DIR="/opt/trmnl"
 CONFIG_FILE="/etc/trmnl.conf"
 SERVICE_FILE="/etc/systemd/system/trmnl.service"
-REPO_URL="https://github.com/birdslikewires/openframe-trmnl"
+BASE_URL="https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main"
 
 # --- Colour output helpers ---
 red()   { echo -e "\033[0;31m$*\033[0m"; }
@@ -81,26 +80,22 @@ else
 	green "All dependencies already present."
 fi
 
-# --- Clone or verify repo ---
-bold "Setting up TRMNL client..."
+# --- Install / update client files ---
+bold "Installing TRMNL client..."
 
-if [[ -d "$INSTALL_DIR/.git" ]]; then
-	green "Repo already present at $INSTALL_DIR"
-elif [[ -f "$INSTALL_DIR/trmnl.sh" ]]; then
-	red "Error: $INSTALL_DIR exists but is not a git repo. Remove it and re-run."
-	exit 1
-else
-	bold "Cloning repo to $INSTALL_DIR..."
-	git clone "$REPO_URL" "$INSTALL_DIR"
-fi
+mkdir -p "$INSTALL_DIR"
 
-chmod +x "$INSTALL_DIR/trmnl.sh"
-green "Client ready at $INSTALL_DIR/"
+curl -sS "$BASE_URL/trmnl.sh"    -o "$INSTALL_DIR/trmnl.sh"
+curl -sS "$BASE_URL/display.py"  -o "$INSTALL_DIR/display.py"
+curl -sS "$BASE_URL/install.sh"  -o "$INSTALL_DIR/install.sh"
+chmod +x "$INSTALL_DIR/trmnl.sh" "$INSTALL_DIR/install.sh"
+
+green "Client installed to $INSTALL_DIR/"
 
 # --- Install systemd unit ---
 bold "Installing systemd service..."
 
-cp "$INSTALL_DIR/trmnl.service" "$SERVICE_FILE"
+curl -sS "$BASE_URL/trmnl.service" -o "$SERVICE_FILE"
 
 systemctl daemon-reload
 systemctl enable trmnl.service
