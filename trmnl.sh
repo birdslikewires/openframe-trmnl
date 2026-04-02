@@ -73,9 +73,9 @@ while true; do
 	if curl -sS --max-time 30 -o "$IMAGE_TMP" "$IMAGE_URL"; then
 		mv "$IMAGE_TMP" "$IMAGE_FILE"
 	else
-		log "Warning: failed to download image, retrying in ${REFRESH}s (${NEXT_REFRESH})" >&2
+		log "Warning: failed to download image, retrying in ${MIN_REFRESH}s" >&2
 		rm -f "$IMAGE_TMP"
-		sleep "$REFRESH"
+		sleep "$MIN_REFRESH"
 		continue
 	fi
 
