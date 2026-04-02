@@ -15,7 +15,7 @@ set -euo pipefail
 INSTALL_DIR="/opt/trmnl"
 CONFIG_FILE="/etc/trmnl.conf"
 SERVICE_FILE="/etc/systemd/system/trmnl.service"
-BASE_URL="https://raw.githubusercontent.com/birdslikewires/openframe-trmnl/main"
+TARBALL_URL="https://github.com/birdslikewires/openframe-trmnl/archive/refs/heads/main.tar.gz"
 
 # --- Colour output helpers ---
 red()   { echo -e "\033[0;31m$*\033[0m"; }
@@ -85,9 +85,15 @@ bold "Installing TRMNL client..."
 
 mkdir -p "$INSTALL_DIR"
 
-curl -sS "$BASE_URL/trmnl.sh"    -o "$INSTALL_DIR/trmnl.sh"
-curl -sS "$BASE_URL/display.py"  -o "$INSTALL_DIR/display.py"
-curl -sS "$BASE_URL/install.sh"  -o "$INSTALL_DIR/install.sh"
+TMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TMP_DIR"' EXIT
+
+bold "Downloading release..."
+curl -sSL "$TARBALL_URL" | tar -xz -C "$TMP_DIR" --strip-components=1
+
+cp "$TMP_DIR/trmnl.sh"   "$INSTALL_DIR/trmnl.sh"
+cp "$TMP_DIR/display.py" "$INSTALL_DIR/display.py"
+cp "$TMP_DIR/install.sh" "$INSTALL_DIR/install.sh"
 chmod +x "$INSTALL_DIR/trmnl.sh" "$INSTALL_DIR/install.sh"
 
 green "Client installed to $INSTALL_DIR/"
@@ -95,7 +101,7 @@ green "Client installed to $INSTALL_DIR/"
 # --- Install systemd unit ---
 bold "Installing systemd service..."
 
-curl -sS "$BASE_URL/trmnl.service" -o "$SERVICE_FILE"
+cp "$TMP_DIR/trmnl.service" "$SERVICE_FILE"
 
 systemctl daemon-reload
 systemctl enable trmnl.service
