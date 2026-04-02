@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## TRMNL display client for OpenFrame
+## TRMNL for OpenFrame v0.06 (2nd April 2026) by Andrew Davison
 ##  Polls the TRMNL cloud API and writes the response image to the framebuffer.
 
 set -euo pipefail
@@ -37,6 +37,9 @@ while true; do
 	# Fetch display metadata from TRMNL API
 	RESPONSE=$(curl -sS --max-time 30 \
 		-H "access-token: ${TRMNL_API_KEY}" \
+		-H "battery-voltage: 4.2" \
+		-H "rssi: -30" \
+		-H "fw-version: null" \
 		"$API_ENDPOINT") || {
 		log "Warning: failed to reach TRMNL API, retrying in ${DEFAULT_REFRESH}s" >&2
 		sleep "$DEFAULT_REFRESH"
