@@ -39,7 +39,7 @@ while true; do
 		-H "access-token: ${TRMNL_API_KEY}" \
 		-H "battery-voltage: 4.2" \
 		-H "rssi: -30" \
-		-H "fw-version: null" \
+		-H "fw-version: 99.99" \
 		"$API_ENDPOINT") || {
 		log "Warning: failed to reach TRMNL API, retrying in ${DEFAULT_REFRESH}s" >&2
 		sleep "$DEFAULT_REFRESH"
@@ -54,15 +54,17 @@ while true; do
 	REFRESH=${REFRESH:-$DEFAULT_REFRESH}
 	(( REFRESH < MIN_REFRESH )) && REFRESH=$MIN_REFRESH
 
+	NEXT_REFRESH=$(date -d "+${REFRESH} seconds" '+%Y-%m-%d %H:%M:%S' 2>/dev/null)
+
 	if [[ "$FILENAME" == "sleep" ]]; then
-		log "Sleep requested; turning off display and waiting ${REFRESH}s"
+		log "Sleep requested; turning off display and waiting ${REFRESH}s (${NEXT_REFRESH})"
 		of-backlight 0 || log "Warning: openframe command failed" >&2
 		sleep "$REFRESH"
 		continue
 	fi
 
 	if [[ -z "$IMAGE_URL" ]]; then
-		log "Warning: no image_url in API response, retrying in ${REFRESH}s" >&2
+		log "Warning: no image_url in API response, retrying in ${REFRESH}s (${NEXT_REFRESH})" >&2
 		sleep "$REFRESH"
 		continue
 	fi
@@ -71,7 +73,7 @@ while true; do
 	if curl -sS --max-time 30 -o "$IMAGE_TMP" "$IMAGE_URL"; then
 		mv "$IMAGE_TMP" "$IMAGE_FILE"
 	else
-		log "Warning: failed to download image, retrying in ${REFRESH}s" >&2
+		log "Warning: failed to download image, retrying in ${REFRESH}s (${NEXT_REFRESH})" >&2
 		rm -f "$IMAGE_TMP"
 		sleep "$REFRESH"
 		continue
@@ -83,7 +85,6 @@ while true; do
 	}
 	of-backlight 1 || log "Warning: of-backlight command failed" >&2
 
-	NEXT_REFRESH=$(date -d "+${REFRESH} seconds" '+%Y-%m-%d %H:%M:%S' 2>/dev/null)
-	log "Display updated; next refresh in ${REFRESH}s (at ${NEXT_REFRESH})"
+	log "Display updated; next refresh in ${REFRESH}s (${NEXT_REFRESH})"
 	sleep "$REFRESH"
 done
