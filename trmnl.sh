@@ -74,10 +74,11 @@ while true; do
 		continue
 	fi
 
-	# Write to framebuffer
+	# Write to framebuffer and ensure display is on
 	python3 /opt/trmnl/display.py "$IMAGE_FILE" "$FRAMEBUFFER" || {
 		log "Warning: display.py failed to write to framebuffer" >&2
 	}
+	of-backlight 1 || log "Warning: of-backlight command failed" >&2
 
 	NEXT_REFRESH=$(date -d "+${REFRESH} seconds" '+%Y-%m-%d %H:%M:%S' 2>/dev/null)
 	log "Display updated; next refresh in ${REFRESH}s (at ${NEXT_REFRESH})"
