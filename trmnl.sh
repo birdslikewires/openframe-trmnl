@@ -37,7 +37,7 @@ while true; do
 	# Fetch display metadata from TRMNL API
 	RESPONSE=$(curl -sS --max-time 30 \
 		-H "access-token: ${TRMNL_API_KEY}" \
-		-H "battery-voltage: 4.2" \
+		-H "battery-voltage: 4.8" \
 		-H "rssi: -30" \
 		-H "fw-version: 99.99" \
 		"$API_ENDPOINT") || {
